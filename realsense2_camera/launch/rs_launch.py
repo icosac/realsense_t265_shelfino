@@ -11,7 +11,9 @@ from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch.conditions import IfCondition
 
 
-configurable_parameters = [{'name': 'camera_name',                  'default': 'camera', 'description': 'camera unique name'},
+configurable_parameters = [{'name': 'camera_name',                  'default': '', 'description': 'camera unique name'},
+                           {'name': 'node_name',                    'default': "t265_node", 'description': 'The name of the ROS2 node'},
+                           {'name': 'node_namespace',               'default': "", 'description': 'The namespace of the ROS2 node'},
                            {'name': 'serial_no',                    'default': "''", 'description': 'choose device by serial number'},
                            {'name': 'usb_port_id',                  'default': "''", 'description': 'choose device by usb port id'},
                            {'name': 'device_type',                  'default': "''", 'description': 'choose device by type'},
@@ -60,6 +62,8 @@ configurable_parameters = [{'name': 'camera_name',                  'default': '
                            {'name': 'depth_module.gain.2',         'default': '16', 'description': 'Initial value for hdr_merge filter'},
                            {'name': 'wait_for_device_timeout',      'default': '-1.', 'description': 'Timeout for waiting for device to connect (Seconds)'},
                            {'name': 'reconnect_timeout',            'default': '6.', 'description': 'Timeout(seconds) between consequtive reconnection attempts'},
+                           {'name': 'tf_ns',                        'default': 'tf_launch_ns', 'description': 'The tf namespace'},
+                           {'name': 'odom_tf',                      'default': 'odom_tf', 'description': 'The tf for odom_frame (WITH namespace)'},
                           ]
 
 def declare_configurable_parameters(parameters):
@@ -76,8 +80,8 @@ def generate_launch_description():
             launch_ros.actions.Node(
                 condition=IfCondition(PythonExpression([LaunchConfiguration('config_file'), " == ''"])),
                 package='realsense2_camera',
-                node_namespace=LaunchConfiguration("camera_name"),
-                node_name=LaunchConfiguration("camera_name"),
+                node_namespace=LaunchConfiguration("node_namespace"),
+                node_name=LaunchConfiguration("node_name"),
                 node_executable='realsense2_camera_node',
                 prefix=['stdbuf -o L'],
                 parameters=[set_configurable_parameters(configurable_parameters)
@@ -88,8 +92,8 @@ def generate_launch_description():
             launch_ros.actions.Node(
                 condition=IfCondition(PythonExpression([LaunchConfiguration('config_file'), " != ''"])),
                 package='realsense2_camera',
-                node_namespace=LaunchConfiguration("camera_name"),
-                node_name=LaunchConfiguration("camera_name"),
+                node_namespace=LaunchConfiguration("node_namespace"),
+                node_name=LaunchConfiguration("node_name"),
                 node_executable='realsense2_camera_node',
                 prefix=['stdbuf -o L'],
                 parameters=[set_configurable_parameters(configurable_parameters)
@@ -105,8 +109,8 @@ def generate_launch_description():
             launch_ros.actions.Node(
                 condition=IfCondition(PythonExpression([LaunchConfiguration('config_file'), " == ''"])),
                 package='realsense2_camera',
-                namespace=LaunchConfiguration("camera_name"),
-                name=LaunchConfiguration("camera_name"),
+                namespace=LaunchConfiguration("node_namespace"),
+                name=LaunchConfiguration("node_name"),
                 executable='realsense2_camera_node',
                 parameters=[set_configurable_parameters(configurable_parameters)
                             ],
@@ -117,8 +121,8 @@ def generate_launch_description():
             launch_ros.actions.Node(
                 condition=IfCondition(PythonExpression([LaunchConfiguration('config_file'), " != ''"])),
                 package='realsense2_camera',
-                namespace=LaunchConfiguration("camera_name"),
-                name=LaunchConfiguration("camera_name"),
+                namespace=LaunchConfiguration("node_namespace"),
+                name=LaunchConfiguration("node_name"),
                 executable='realsense2_camera_node',
                 parameters=[set_configurable_parameters(configurable_parameters)
                             , PythonExpression([LaunchConfiguration("config_file")])

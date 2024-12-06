@@ -465,7 +465,7 @@ void BaseRealSenseNode::pose_callback(rs2::frame frame)
     static tf2_ros::TransformBroadcaster br(_node);
     geometry_msgs::msg::TransformStamped msg;
     msg.header.stamp = t;
-    msg.header.frame_id = DEFAULT_ODOM_FRAME_ID;
+    msg.header.frame_id = this->_odom_tf;
     msg.child_frame_id = FRAME_ID(POSE);
     msg.transform.translation.x = pose_msg.pose.position.x;
     msg.transform.translation.y = pose_msg.pose.position.y;
@@ -474,6 +474,9 @@ void BaseRealSenseNode::pose_callback(rs2::frame frame)
     msg.transform.rotation.y = pose_msg.pose.orientation.y;
     msg.transform.rotation.z = pose_msg.pose.orientation.z;
     msg.transform.rotation.w = pose_msg.pose.orientation.w;
+
+    // std::cout   << "Sending tf broadcast with frame_id: " << msg.header.frame_id
+    //             << " and child_frame_id: " << msg.child_frame_id << std::endl;
 
     if (_publish_odom_tf) br.sendTransform(msg);
 
@@ -499,7 +502,7 @@ void BaseRealSenseNode::pose_callback(rs2::frame frame)
 
         nav_msgs::msg::Odometry odom_msg;
 
-        odom_msg.header.frame_id = DEFAULT_ODOM_FRAME_ID;
+        odom_msg.header.frame_id = this->_odom_tf;
         odom_msg.child_frame_id = FRAME_ID(POSE);
         odom_msg.header.stamp = t;
         odom_msg.pose.pose = pose_msg.pose;
@@ -517,6 +520,10 @@ void BaseRealSenseNode::pose_callback(rs2::frame frame)
                                     0, 0, 0, cov_twist, 0, 0,
                                     0, 0, 0, 0, cov_twist, 0,
                                     0, 0, 0, 0, 0, cov_twist};
+
+        // std::cout   << "Sending odom with frame_id: " << odom_msg.header.frame_id
+        //             << " and child_frame_id: " << odom_msg.child_frame_id << std::endl;
+
         _odom_publisher->publish(odom_msg);
         ROS_DEBUG("Publish %s stream", rs2_stream_to_string(frame.get_profile().stream_type()));
     }
