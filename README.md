@@ -1,3 +1,20 @@
+# Additional information
+
+This is a patch to this [work](https://github.com/IntelRealSense/realsense-ros). 
+
+It adds some parameters that can be configured in order to correctly set the transformations:
+
+Within the node, now these parameters are available:
+
+- `odom_tf`: specifies the odom link to which the t265 is connected. It will NOT add any more namespace, so this should be the full name of the link. 
+- `camera_name`: specifies the name of the camera used if a single robot has multiple cameras.
+- `tf_ns`: specifies the namespace to be used for all the link (except `odom_tf`).
+
+The launch file `rs_launch.py` adds the previous parameters, plus:
+
+- `node_name`: it sets the name of the node, while before it was the same as `camera_name`.
+- `node_namespace` it sets the namespace of the node, while before it was the same as `camera_name`.
+
 # ROS2 Wrapper for Intel&reg; RealSense&trade; Devices
 These are packages for using Intel RealSense cameras (D400 and L500 series, SR300 camera and T265 Tracking Module) with ROS2.
 
