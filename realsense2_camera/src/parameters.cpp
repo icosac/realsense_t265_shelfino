@@ -70,7 +70,7 @@ void BaseRealSenseNode::getParameters()
 
     param_name = std::string("base_frame_id");
     _base_frame_id = _parameters->setParam<std::string>(param_name, DEFAULT_BASE_FRAME_ID);
-    _base_frame_id = (static_cast<std::ostringstream&&>(std::ostringstream() << _tf_ns << (_camera_name != "" ? ("/"+_camera_name) : "")  << "/" << "/base_camera_link")).str();
+    _base_frame_id = (static_cast<std::ostringstream&&>(std::ostringstream() << _tf_ns << (_camera_name != "" ? ("/"+_camera_name) : "")  << "/" << "base_camera_link")).str();
     _parameters_names.push_back(param_name);
 }
 
